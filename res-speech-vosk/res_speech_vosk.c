@@ -138,7 +138,14 @@ static int vosk_recog_activate_grammar(struct ast_speech *speech, const char *gr
 
 /** \brief Deactivate a loaded grammar */
 static int vosk_recog_deactivate_grammar(struct ast_speech *speech, const char *grammar_name)
-{
+{	
+	vosk_speech_t *vosk_speech = speech->data;
+
+	char *options_buf = grammar_name;
+	int len = 7;
+	ast_log(LOG_NOTICE, "Feature:%s", options_buf);
+	ast_websocket_write(vosk_speech->ws, AST_WEBSOCKET_OPCODE_TEXT, options_buf, len);
+
 	return 0;
 }
 
@@ -161,7 +168,7 @@ static int vosk_recog_write(struct ast_speech *speech, void *data, int len)
 	if (ast_websocket_wait_for_input(vosk_speech->ws, 0) > 0) {
 		res_len = ast_websocket_read_string(vosk_speech->ws, &res);
 		if (res_len >= 0) {
-			ast_log(LOG_NOTICE, "(%s) Got result: '%s'\n", vosk_speech->name, res);
+			ast_log(LOG_NOTICE, "(vosk) Got partial");
 			struct ast_json_error err;
 			struct ast_json *res_json = ast_json_load_string(res, &err);
 			if (res_json != NULL) {
