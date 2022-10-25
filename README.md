@@ -36,6 +36,9 @@ load = res_speech_vosk.so
 
 ## Dialplan configuration
 Refer the following code for a sample dialplan that uses our district selection module
+
+Make sure to choose the appropriate speech recognition module using `SpeechDeactivateGrammar`. For example, `MDLcolr`, `MDLdist` etc.
+
 ```
 [district_incoming]
 exten => 111,1,Answer
@@ -45,6 +48,7 @@ same => n,Playback("/home/ubuntu/dev/media/district/intro-hello")
 
 ; Connect to Desh Voice server
 same => n(listen),SpeechCreate
+same => n,SpeechDeactivateGrammar(MDLdist)
 
 ; Play "Which district are you calling from?" while listening in the background
 ; This will timeout 5 seconds after playback is complete
